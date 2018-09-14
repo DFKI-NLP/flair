@@ -2,7 +2,7 @@ import os
 import pickle
 import re
 from abc import abstractmethod
-from typing import List, Union
+from typing import List, Union, Tuple
 
 import gensim
 import numpy as np
@@ -304,7 +304,7 @@ class CharacterEmbeddings(TokenEmbeddings):
 
 
 class RelativeOffsetEmbeddings(TokenEmbeddings):
-    def __init__(self, tag, embedding_dim=32, max_len=200):
+    def __init__(self, tag: str, embedding_dim: int = 32, max_len: int = 200):
         super(RelativeOffsetEmbeddings, self).__init__()
         self.name = 'RelativeOffset_' + tag
         self.static_embeddings = False
@@ -665,8 +665,8 @@ class DocumentLSTMEmbeddings(DocumentEmbeddings):
 
 
 class DocumentCNNEmbeddings(DocumentEmbeddings):
-    def __init__(self, token_embeddings: List[TokenEmbeddings], num_filters=100,
-                 ngram_filter_sizes=(2, 3, 4, 5), dropout=.5):
+    def __init__(self, token_embeddings: List[TokenEmbeddings], num_filters: int =100,
+                 ngram_filter_sizes: Tuple[int] = (2, 3, 4, 5), dropout: float = .5):
         super().__init__()
 
         self.embeddings: List[TokenEmbeddings] = token_embeddings
@@ -682,7 +682,7 @@ class DocumentCNNEmbeddings(DocumentEmbeddings):
             self.length_of_all_token_embeddings += token_embedding.embedding_length
         
         self._convolution_layers = [
-            Conv1d(
+            torch.nn.Conv1d(
                 in_channels=self.length_of_all_token_embeddings,
                 out_channels=self.num_filters,
                 kernel_size=ngram_size) for ngram_size in self.ngram_filter_sizes
@@ -691,7 +691,7 @@ class DocumentCNNEmbeddings(DocumentEmbeddings):
         for i, conv_layer in enumerate(self._convolution_layers):
             self.add_module('conv_layer_%d' % i, conv_layer)
         
-        self.dropout = nn.Dropout(dropout)
+        self.dropout = torch.nn.Dropout(dropout)
         
         if torch.cuda.is_available():
             self.cuda()
@@ -758,7 +758,8 @@ class DocumentCNNEmbeddings(DocumentEmbeddings):
         filter_outputs = []
         for i in range(len(self._convolution_layers)):
             convolution_layer = getattr(self, 'conv_layer_{}'.format(i))
-            filter_outputs.append(F.relu(convolution_layer(sentence_tensor)).max(dim=2)[0])
+            filter_outputs.append(
+                torch.nn.functional.relu(convolution_layer(sentence_tensor)).max(dim=2)[0])
 
         # Now we have a list of `num_conv_layers` tensors of shape `(batch_size, num_filters)`.
         # Concatenating them gives us a tensor of shape
