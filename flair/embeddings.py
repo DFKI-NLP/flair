@@ -303,6 +303,39 @@ class CharacterEmbeddings(TokenEmbeddings):
                 token.set_embedding(self.name, character_embeddings[token_number])
 
 
+class RelativeOffsetEmbeddings(TokenEmbeddings):
+    def __init__(self, tag, embedding_dim=32, max_len=200):
+        super(RelativeOffsetEmbeddings, self).__init__()
+        self.name = 'RelativeOffset_' + tag
+        self.static_embeddings = False
+        
+        self.tag = tag
+        self.offset_embedding_dim = embedding_dim
+        self.max_len = max_len
+        
+        self.offset_embedding = torch.nn.Embedding(2 * self.max_len, self.offset_embedding_dim)
+        
+        self.__embedding_length = self.offset_embedding_dim
+        
+    @property
+    def embedding_length(self) -> int:
+        return self.__embedding_length
+
+    def _add_embeddings_internal(self, sentences: List[Sentence]):
+        for sentence in sentences:
+            token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
+            
+            offsets = torch.LongTensor(token_offset_indices)
+            
+            #if torch.cuda.is_available():
+            #    offsets = offsets.cuda()
+            
+            offset_embeddings = self.offset_embedding(offsets)
+            
+            for token_number, token in enumerate(sentence.tokens):
+                token.set_embedding(self.name, offset_embeddings[token_number])
+
+
 class CharLMEmbeddings(TokenEmbeddings):
     """Contextual string embeddings of words, as proposed in Akbik et al., 2018."""
 
