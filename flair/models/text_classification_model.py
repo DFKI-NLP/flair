@@ -190,3 +190,4 @@ class TextClassifier(nn.Module):
             vec = vec.cuda()
 
         return vec
+
