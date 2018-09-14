@@ -664,6 +664,120 @@ class DocumentLSTMEmbeddings(DocumentEmbeddings):
         pass
 
 
+class DocumentCNNEmbeddings(DocumentEmbeddings):
+    def __init__(self, token_embeddings: List[TokenEmbeddings], num_filters=100,
+                 ngram_filter_sizes=(2, 3, 4, 5), dropout=.5):
+        super().__init__()
+
+        self.embeddings: List[TokenEmbeddings] = token_embeddings
+        
+        self.num_filters = num_filters
+        self.ngram_filter_sizes = ngram_filter_sizes
+        
+        self.name = 'document_cnn'
+        self.static_embeddings = False
+        
+        self.length_of_all_token_embeddings = 0
+        for token_embedding in self.embeddings:
+            self.length_of_all_token_embeddings += token_embedding.embedding_length
+        
+        self._convolution_layers = [
+            Conv1d(
+                in_channels=self.length_of_all_token_embeddings,
+                out_channels=self.num_filters,
+                kernel_size=ngram_size) for ngram_size in self.ngram_filter_sizes
+        ]
+        
+        for i, conv_layer in enumerate(self._convolution_layers):
+            self.add_module('conv_layer_%d' % i, conv_layer)
+        
+        self.dropout = nn.Dropout(dropout)
+        
+        if torch.cuda.is_available():
+            self.cuda()
+
+    @property
+    def embedding_length(self) -> int:
+        return self.num_filters * len(self.ngram_filter_sizes)
+
+    def embed(self, sentences: Union[List[Sentence], Sentence]):
+        """Add embeddings to all sentences in the given list of sentences. If embeddings are already added, update
+         only if embeddings are non-static."""
+
+        if type(sentences) is Sentence:
+            sentences = [sentences]
+
+        sentences.sort(key=lambda x: len(x), reverse=True)
+
+        for token_embedding in self.embeddings:
+            token_embedding.embed(sentences)
+
+        # first, sort sentences by number of tokens
+        longest_token_sequence_in_batch: int = len(sentences[0])
+
+        all_sentence_tensors = []
+        lengths: List[int] = []
+
+        # go through each sentence in batch
+        for i, sentence in enumerate(sentences):
+
+            lengths.append(len(sentence.tokens))
+
+            word_embeddings = []
+
+            for token, token_idx in zip(sentence.tokens, range(len(sentence.tokens))):
+                token: Token = token
+                word_embeddings.append(token.get_embedding().unsqueeze(0))
+
+            # PADDING: pad shorter sentences out
+            for add in range(longest_token_sequence_in_batch - len(sentence.tokens)):
+                word_embeddings.append(
+                    torch.FloatTensor(np.zeros(self.length_of_all_token_embeddings, dtype='float')).unsqueeze(0))
+
+            word_embeddings_tensor = torch.cat(word_embeddings, 0)
+
+            sentence_states = word_embeddings_tensor
+
+            # ADD TO SENTENCE LIST: add the representation
+            all_sentence_tensors.append(sentence_states.unsqueeze(0).transpose(1, 2).contiguous())
+
+        # --------------------------------------------------------------------
+        # GET REPRESENTATION FOR ENTIRE BATCH
+        # --------------------------------------------------------------------
+        sentence_tensor = torch.cat(all_sentence_tensors, 0)
+        if torch.cuda.is_available():
+            sentence_tensor = sentence_tensor.cuda()
+
+        # --------------------------------------------------------------------
+        # FF PART
+        # --------------------------------------------------------------------
+        # TODO: add word reprojection
+        #if self.reproject_words:
+        #    sentence_tensor = self.word_reprojection_map(sentence_tensor)
+
+        filter_outputs = []
+        for i in range(len(self._convolution_layers)):
+            convolution_layer = getattr(self, 'conv_layer_{}'.format(i))
+            filter_outputs.append(F.relu(convolution_layer(sentence_tensor)).max(dim=2)[0])
+
+        # Now we have a list of `num_conv_layers` tensors of shape `(batch_size, num_filters)`.
+        # Concatenating them gives us a tensor of shape
+        # `(batch_size, num_filters * num_conv_layers)`.
+        outputs = torch.cat(
+            filter_outputs, dim=1) if len(filter_outputs) > 1 else filter_outputs[0]
+        
+        outputs = self.dropout(outputs)
+        
+        for sentence_no, length in enumerate(lengths):
+            embedding = outputs[sentence_no].unsqueeze(0)
+            
+            sentence = sentences[sentence_no]
+            sentence.set_embedding(self.name, embedding)
+
+    def _add_embeddings_internal(self, sentences: List[Sentence]):
+        pass
+
+
 class DocumentLMEmbeddings(DocumentEmbeddings):
     def __init__(self, charlm_embeddings: List[CharLMEmbeddings], detach: bool = True):
         super().__init__()
