@@ -108,12 +108,12 @@ class TextClassifierTrainer:
                 self.model.eval()
 
                 print('-' * 100)
-                train_metrics, train_loss = self.evaluate(self.corpus.train, mini_batch_size=mini_batch_size,
-                                                          embeddings_in_memory=embeddings_in_memory)
-                train_f_score = train_metrics['MICRO_AVG'].f_score()
-                train_acc = train_metrics['MICRO_AVG'].accuracy()
-                print("{0:<7} epoch {1} - loss {2:.8f} - f-score {3:.4f} - acc {4:.4f}".format(
-                    'TRAIN:', epoch, train_loss, train_f_score, train_acc))
+                #train_metrics, train_loss = self.evaluate(self.corpus.train, mini_batch_size=mini_batch_size,
+                #                                          embeddings_in_memory=embeddings_in_memory)
+                #train_f_score = train_metrics['MICRO_AVG'].f_score()
+                #train_acc = train_metrics['MICRO_AVG'].accuracy()
+                #print("{0:<7} epoch {1} - loss {2:.8f} - f-score {3:.4f} - acc {4:.4f}".format(
+                #    'TRAIN:', epoch, train_loss, train_f_score, train_acc))
 
                 dev_f_score = dev_acc = dev_loss = 0
                 if not train_with_dev:
@@ -124,9 +124,9 @@ class TextClassifierTrainer:
                     print("{0:<7} epoch {1} - loss {2:.8f} - f-score {3:.4f} - acc {4:.4f}".format(
                         'DEV:', epoch, dev_loss, dev_f_score, dev_acc))
 
-                with open(loss_txt, 'a') as f:
-                    f.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
-                        epoch, epoch * len(batches), dev_loss, train_loss, dev_f_score, train_f_score, dev_acc, train_acc))
+                #with open(loss_txt, 'a') as f:
+                #    f.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
+                #        epoch, epoch * len(batches), dev_loss, train_loss, dev_f_score, train_f_score, dev_acc, train_acc))
 
                 # IMPORTANT: Switch back to train mode
                 self.model.train()
