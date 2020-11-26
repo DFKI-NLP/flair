@@ -1,14 +1,17 @@
 import random
 from collections import defaultdict
 from functools import reduce
-from typing import List
+from typing import List, Union
+from pathlib import Path
+import datetime
 
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from flair.data import Sentence, TaggedCorpus, Dictionary
 from flair.models.text_classification_model import TextClassifier
-from flair.training_utils import convert_labels_to_one_hot, calculate_micro_avg_metric, init_output_file, clear_embeddings, \
+from flair.training_utils import convert_labels_to_one_hot, calculate_micro_avg_metric, init_output_file, \
+    clear_embeddings, \
     calculate_class_metrics
 
 
@@ -17,7 +20,8 @@ class TextClassifierTrainer:
     Training class to train and evaluate a text classification model.
     """
 
-    def __init__(self, model: TextClassifier, corpus: TaggedCorpus, label_dict: Dictionary, test_mode: bool = False) -> None:
+    def __init__(self, model: TextClassifier, corpus: TaggedCorpus, label_dict: Dictionary,
+                 test_mode: bool = False) -> None:
         self.model: TextClassifier = model
         self.corpus: TaggedCorpus = corpus
         self.label_dict: Dictionary = label_dict
@@ -32,7 +36,8 @@ class TextClassifierTrainer:
               patience: int = 2,
               save_model: bool = True,
               embeddings_in_memory: bool = True,
-              train_with_dev: bool = False):
+              train_with_dev: bool = False,
+              use_tensorboard: bool = False):
         """
         Trains the model using the training data of the corpus.
         :param base_path: the directory to which any results should be written to
@@ -44,9 +49,31 @@ class TextClassifierTrainer:
         :param train_with_dev: boolean value indicating, if the dev data set should be used for training or not
         """
 
-        loss_txt = init_output_file(base_path, 'loss.txt')
+        if use_tensorboard:
+            try:
+                from torch.utils.tensorboard import SummaryWriter
+
+                writer = SummaryWriter()
+            except:
+                log_line(log)
+                log.warning(
+                    "ATTENTION! PyTorch >= 1.1.0 and pillow are required for TensorBoard support!"
+                )
+                log_line(log)
+                self.use_tensorboard = False
+                pass
+
+        loss_txt = init_output_file_in(base_path, 'loss.tsv')
+        training_log = init_output_file_in(base_path, 'training_log.txt')
         with open(loss_txt, 'a') as f:
-            f.write('EPOCH\tITERATION\tDEV_LOSS\tTRAIN_LOSS\tDEV_F_SCORE\tTRAIN_F_SCORE\tDEV_ACC\tTRAIN_ACC\n')
+            f.write(
+                f"EPOCH\tTIMESTAMP\tLEARNING_RATE\tTRAIN_LOSS\tDEV_LOSS\tDEV_PRECISION\tDEV_RECALL\tDEV_F1\tDEV_ACC\n"
+                #f"EPOCH\tTIMESTAMP\tBAD_EPOCHS\tLEARNING_RATE\tTRAIN_LOSS\tDEV_LOSS\tDEV_PRECISION\tDEV_RECALL\tDEV_F1\tTRAIN_PRECISION\tTRAIN_RECALL\tTRAIN_F1\tDEV_ACC\tTRAIN_ACC\n"
+            )
+            f.close()
+
+        # with open(loss_txt, 'a') as f:
+        #    f.write('EPOCH\tITERATION\tDEV_LOSS\tTRAIN_LOSS\tDEV_F_SCORE\tTRAIN_F_SCORE\tDEV_ACC\tTRAIN_ACC\n')
         weights_txt = init_output_file(base_path, 'weights.txt')
 
         weights_index = defaultdict(lambda: defaultdict(lambda: list()))
@@ -115,16 +142,29 @@ class TextClassifierTrainer:
                 #print("{0:<7} epoch {1} - loss {2:.8f} - f-score {3:.4f} - acc {4:.4f}".format(
                 #    'TRAIN:', epoch, train_loss, train_f_score, train_acc))
 
-                dev_f_score = dev_acc = dev_loss = 0
+                dev_presicion = dev_recall = dev_f_score = dev_acc = dev_loss = 0
                 if not train_with_dev:
                     dev_metrics, dev_loss = self.evaluate(self.corpus.dev, mini_batch_size=mini_batch_size,
                                                           embeddings_in_memory=embeddings_in_memory)
+                    dev_precision = dev_metrics['MICRO_AVG'].precision()
+                    dev_recall = dev_metrics['MICRO_AVG'].recall()
                     dev_f_score = dev_metrics['MICRO_AVG'].f_score()
                     dev_acc = dev_metrics['MICRO_AVG'].accuracy()
                     print("{0:<7} epoch {1} - loss {2:.8f} - f-score {3:.4f} - acc {4:.4f}".format(
                         'DEV:', epoch, dev_loss, dev_f_score, dev_acc))
 
-                #with open(loss_txt, 'a') as f:
+                with open(loss_txt, 'a') as f:
+                    f.write(
+                        f"{epoch}\t{datetime.datetime.now():%H:%M:%S}\t{learning_rate:.4f}\t{current_loss}\t{dev_loss}\t{dev_presicion}\t{dev_recall}\t{dev_f_score}\t{dev_acc}\n"
+                    )
+                    f.close()
+
+                if use_tensorboard:
+                    writer.add_scalar("dev_loss", dev_loss, epoch)
+                    writer.add_scalar("dev_score", dev_f_score, epoch)
+                    writer.add_scalar("train_loss", current_loss, epoch)
+                    #writer.add_scalar("train_score", train_f_score, epoch)
+
                 #    f.write('{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n'.format(
                 #        epoch, epoch * len(batches), dev_loss, train_loss, dev_f_score, train_f_score, dev_acc, train_acc))
 
@@ -159,8 +199,19 @@ class TextClassifierTrainer:
 
             for metric in test_metrics.values():
                 metric.print()
+            with open(training_log, 'a') as c:
+                for metric in test_metrics.values():
+                    print(metric.name + "\t" + "False-Negative: " + str(metric._fn) + "\t" + "False-Positive: " + str(
+                        metric._fp) + "\t" + "True-Negative: " + str(metric._tn) + "\t" + "True-Positive: " + str(
+                        metric._tp))
+                    c.write(metric.name + "\t" + "False-Negative: " + str(metric._fn) + "\t" + "False-Positive: " + str(
+                        metric._fp) + "\t" + "True-Negative: " + str(metric._tn) + "\t" + "True-Positive: " + str(
+                        metric._tp) + "\n")
+                c.close()
 
             print('-' * 100)
+            if use_tensorboard:
+                writer.close()
 
         except KeyboardInterrupt:
             print('-' * 89)
@@ -217,7 +268,7 @@ class TextClassifierTrainer:
         for key in self.model.state_dict().keys():
 
             vec = self.model.state_dict()[key]
-            weights_to_watch = min(10, reduce(lambda x, y: x*y, list(vec.size())))
+            weights_to_watch = min(10, reduce(lambda x, y: x * y, list(vec.size())))
 
             if key not in weights_index:
                 self._init_weights_index(key, weights_index, weights_to_watch)
@@ -250,3 +301,19 @@ class TextClassifierTrainer:
                 i += 1
 
         weights_index[key] = indices
+
+
+def init_output_file_in(base_path: Union[str, Path], file_name: str) -> Path:
+    """
+    Creates a local file.
+    :param base_path: the path to the directory
+    :param file_name: the file name
+    :return: the created file
+    """
+    if type(base_path) is str:
+        base_path = Path(base_path)
+    base_path.mkdir(parents=True, exist_ok=True)
+
+    file = base_path / file_name
+    open(file, "w", encoding="utf-8").close()
+    return file

@@ -336,6 +336,55 @@ class RelativeOffsetEmbeddings(TokenEmbeddings):
                 token.set_embedding(self.name, offset_embeddings[token_number])
 
 
+class ConceptEmbeddings(TokenEmbeddings):
+    def __init__(self, tag:str, embedding_dim: int = 32, max_len: int = 200):
+
+        super(ConceptEmbeddings, self).__init__()
+        self.name = 'ConceptEmbedding_' + tag
+        self.static_embeddings = False
+
+        self.tag = tag
+        self.offset_embedding_dim = embedding_dim
+        self.max_len = max_len
+
+        self.offset_embedding = torch.nn.Embedding(2 * self.max_len, self.offset_embedding_dim)
+
+
+        self.__embedding_length = self.offset_embedding_dim
+
+    @property
+    def embedding_length(self) -> int:
+        return self.__embedding_length
+
+    def _add_embeddings_internal(self, sentences: List[Sentence]):
+        for sentence in sentences:
+            #for t in sentence.tokens:
+            #    if t.get_tag(self.tag) != t.get_tag('concept_1'):
+            #        raise
+            #    print(t, t.get_tag(self.tag))
+            #token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
+            token_offset_indices = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
+
+            #token_offset_indices = [x - 1 for x in token_offset_indices if x == 101]
+
+            offsets = torch.LongTensor(token_offset_indices)
+
+            if torch.cuda.is_available():
+                offsets = offsets.cuda()
+
+            offset_embeddings = self.offset_embedding(offsets)
+            pass
+
+            for token_number, token in enumerate(sentence.tokens):
+                token.set_embedding(self.name, offset_embeddings[token_number])
+
+
+
+
+
+
+
+
 class CharLMEmbeddings(TokenEmbeddings):
     """Contextual string embeddings of words, as proposed in Akbik et al., 2018."""
 
