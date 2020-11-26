@@ -303,43 +303,118 @@ class CharacterEmbeddings(TokenEmbeddings):
                 token.set_embedding(self.name, character_embeddings[token_number])
 
 
-class RelativeOffsetEmbeddings(TokenEmbeddings):
-    def __init__(self, tag: str, embedding_dim: int = 32, max_len: int = 200):
-        super(RelativeOffsetEmbeddings, self).__init__()
-        self.name = 'RelativeOffset_' + tag
+
+
+class ConceptEmbeddings_2(TokenEmbeddings):
+    def __init__(self, tag:str, embedding_dim: int = 32, max_len: int = 200, concept_embedding_dir: str = ""):
+        super(ConceptEmbeddings_2, self).__init__()
+
+        self.name = 'ConceptEmbedding_' + tag
         self.static_embeddings = False
-        
         self.tag = tag
-        self.offset_embedding_dim = embedding_dim
+        self.offset_embedding_dim = 100#embedding_dim
         self.max_len = max_len
-        
+
         self.offset_embedding = torch.nn.Embedding(2 * self.max_len, self.offset_embedding_dim)
-        
+
         self.__embedding_length = self.offset_embedding_dim
+
+        # Ammer
+        self.concept_embedding_dir = concept_embedding_dir
+        """
         
+        self.int_to_concept_dict = {}
+        with open(concept_embedding_dir + 'vocabulary_concept_id/int_concept_dict.pickle', 'rb') as handle:
+            self.int_to_concept_dict = pickle.load(handle)
+
+        self.concept_embed_dict = {}
+
+        self.vec_file = open(concept_embedding_dir + "vocabulary_concept_id/concept_embeddings.vec", encoding='utf8')
+        for i in self.vec_file:
+
+            concept = i.split("\n")[0].split(" ")[0]
+            embedding = i.split("\n")[0].split(" ")[1:-1]
+            tmp = []
+
+            for embed in embedding:
+                embed = embed.replace(" ", "")
+                # print(embed)
+                tmp.append(float(embed))
+            print(concept, len(torch.tensor(tmp)))
+            self.concept_embed_dict[concept] = torch.Tensor(tmp)
+
+        """
+        #for i in self.concept_embed_dict.keys():
+        #    if len(self.concept_embed_dict[i]) < 100:
+        #        print(self.int_to_concept_dict[i])
+
+        # print(self.concept_embed_dict)
+
     @property
     def embedding_length(self) -> int:
         return self.__embedding_length
 
     def _add_embeddings_internal(self, sentences: List[Sentence]):
+
+        int_to_concept_dict = {}
+        with open(self.concept_embedding_dir + 'vocabulary_concept_id/int_concept_dict.pickle', 'rb') as handle:
+            int_to_concept_dict = pickle.load(handle)
+
+        concept_embed_dict = {}
+
+        vec_file = open(self.concept_embedding_dir + "vocabulary_concept_id/concept_embeddings.vec", encoding='utf8')
+        for i in vec_file:
+
+            concept = i.split("\n")[0].split(" ")[0]
+            embedding = i.split("\n")[0].split(" ")[1:-1]
+            tmp = []
+
+            for embed in embedding:
+                embed = embed.replace(" ", "")
+                # print(embed)
+                tmp.append(float(embed))
+            #print(concept, len(torch.tensor(tmp)))
+            concept_embed_dict[concept] = torch.Tensor(tmp)
+
+
+
+        # print(self.concept_embed_dict)
         for sentence in sentences:
+            token_offset_indices_noshift: List[Int] = [token.get_tag(self.tag) for token in sentence.tokens]
             token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
-            
             offsets = torch.LongTensor(token_offset_indices)
-            
-            #if torch.cuda.is_available():
-            #    offsets = offsets.cuda()
-            
-            offset_embeddings = self.offset_embedding(offsets)
-            
+            concept_embeddings = self.offset_embedding(offsets)
+
+
+            #print(token_offset_indices_noshift, "\n------------\n\n")
+
+            #for i in concept_embeddings:
+
+             #   print("---------->", i, "\n")
+
+            for i in range(len(token_offset_indices_noshift)):
+                #print(token_offset_indices_noshift[i], self.int_to_concept_dict[token_offset_indices_noshift[i]], len(self.concept_embed_dict[self.int_to_concept_dict[token_offset_indices_noshift[i]]]))
+                #concept_embeddings[i] = self.concept_embed_dict[self.int_to_concept_dict[token_offset_indices_noshift[i]]]
+                concept_embeddings[i] = concept_embed_dict[int_to_concept_dict[token_offset_indices_noshift[i]]]
+
+            #print("----->",concept_embeddings, "<-----------")
             for token_number, token in enumerate(sentence.tokens):
-                token.set_embedding(self.name, offset_embeddings[token_number])
+                #print(token, type(token.embedding))
+                token.set_embedding(self.name, concept_embeddings[token_number])
+                #print(token.embedding)
+
+            #for token in sentence.tokens:
+            #    token.set_embedding(self.name, self.concept_embed_dict[self.int_to_concept_dict[token.get_tag(self.tag)]])
+
+                # print("--------------> ",token, token.get_tag(self.tag), self.int_to_concept_dict[token.get_tag(self.tag)], token.get_embedding())
+                # print(self.concept_embed_dict[self.int_to_concept_dict[token.get_tag(self.tag)]])
+                # print()
 
 
 class ConceptEmbeddings(TokenEmbeddings):
     def __init__(self, tag:str, embedding_dim: int = 32, max_len: int = 200):
-
         super(ConceptEmbeddings, self).__init__()
+
         self.name = 'ConceptEmbedding_' + tag
         self.static_embeddings = False
 
@@ -349,6 +424,38 @@ class ConceptEmbeddings(TokenEmbeddings):
 
         self.offset_embedding = torch.nn.Embedding(2 * self.max_len, self.offset_embedding_dim)
 
+        self.__embedding_length = self.offset_embedding_dim
+
+    @property
+    def embedding_length(self) -> int:
+        return self.__embedding_length
+
+    def _add_embeddings_internal(self, sentences: List[Sentence]):
+        for sentence in sentences:
+            token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
+
+            offsets = torch.LongTensor(token_offset_indices)
+
+#            if torch.cuda.is_available():
+#            	offsets = offsets.cuda()
+
+            offset_embeddings = self.offset_embedding(offsets)
+
+            for token_number, token in enumerate(sentence.tokens):
+                token.set_embedding(self.name, offset_embeddings[token_number])
+
+
+class RelativeOffsetEmbeddings(TokenEmbeddings):
+    def __init__(self, tag: str, embedding_dim: int = 32, max_len: int = 200):
+        super(RelativeOffsetEmbeddings, self).__init__()
+        self.name = 'RelativeOffset_' + tag
+        self.static_embeddings = False
+
+        self.tag = tag
+        self.offset_embedding_dim = embedding_dim
+        self.max_len = max_len
+
+        self.offset_embedding = torch.nn.Embedding(2 * self.max_len, self.offset_embedding_dim)
 
         self.__embedding_length = self.offset_embedding_dim
 
@@ -358,31 +465,18 @@ class ConceptEmbeddings(TokenEmbeddings):
 
     def _add_embeddings_internal(self, sentences: List[Sentence]):
         for sentence in sentences:
-            #for t in sentence.tokens:
-            #    if t.get_tag(self.tag) != t.get_tag('concept_1'):
-            #        raise
-            #    print(t, t.get_tag(self.tag))
-            #token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
-            token_offset_indices = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
 
-            #token_offset_indices = [x - 1 for x in token_offset_indices if x == 101]
+            token_offset_indices: List[Int] = [token.get_tag(self.tag) + self.max_len for token in sentence.tokens]
 
             offsets = torch.LongTensor(token_offset_indices)
 
-            if torch.cuda.is_available():
-                offsets = offsets.cuda()
+            #if torch.cuda.is_available():
+            #    offsets = offsets.cuda()
 
             offset_embeddings = self.offset_embedding(offsets)
-            pass
 
             for token_number, token in enumerate(sentence.tokens):
                 token.set_embedding(self.name, offset_embeddings[token_number])
-
-
-
-
-
-
 
 
 class CharLMEmbeddings(TokenEmbeddings):
@@ -799,7 +893,7 @@ class DocumentCNNEmbeddings(DocumentEmbeddings):
 
         # --------------------------------------------------------------------
         # FF PART
-        # --------------------------------------------------------------------
+        # ---------------------------------------------CNN-----------------------
         # TODO: add word reprojection
         #if self.reproject_words:
         #    sentence_tensor = self.word_reprojection_map(sentence_tensor)
