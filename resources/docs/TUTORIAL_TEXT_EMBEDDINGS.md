@@ -31,7 +31,7 @@ So, if you want to create a document embedding using GloVe embeddings together w
 use the following code:
 
 ```python
-from flair.embeddings import WordEmbeddings, CharLMEmbeddings, DocumentMeanEmbeddings
+from flairrelex.embeddings import WordEmbeddings, CharLMEmbeddings, DocumentMeanEmbeddings
 
 # initialize the word embeddings
 glove_embedding = WordEmbeddings('glove')
@@ -69,7 +69,7 @@ The LSTM takes as input the word embeddings of every token in the document and p
 Initiate the `DocumentLSTMEmbeddings` by passing a list of word embeddings:
 
 ```python
-from flair.embeddings import WordEmbeddings, DocumentLSTMEmbeddings
+from flairrelex.embeddings import WordEmbeddings, DocumentLSTMEmbeddings
 
 glove_embedding = WordEmbeddings('glove')
 

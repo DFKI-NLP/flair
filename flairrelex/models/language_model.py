@@ -3,7 +3,7 @@ import torch
 import math
 from torch.autograd import Variable
 from typing import Dict, List
-from flair.data import Dictionary
+from flairrelex.data import Dictionary
 
 
 class LanguageModel(nn.Module):

@@ -1,10 +1,10 @@
 import os
 import pytest
 
-from flair.embeddings import WordEmbeddings, TokenEmbeddings, CharLMEmbeddings, StackedEmbeddings, \
+from flairrelex.embeddings import WordEmbeddings, TokenEmbeddings, CharLMEmbeddings, StackedEmbeddings, \
     DocumentLSTMEmbeddings, DocumentMeanEmbeddings
 
-from flair.data import Sentence
+from flairrelex.data import Sentence
 
 
 @pytest.mark.skipif("TRAVIS" in os.environ and os.environ["TRAVIS"] == "true", reason="Skipping this test on Travis CI.")

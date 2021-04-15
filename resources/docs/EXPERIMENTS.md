@@ -37,9 +37,9 @@ Now, select `ner` as the tag you wish to predict and init the embeddings you wis
 The full code to get a state-of-the-art model for English NER is as follows: 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -70,7 +70,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -79,7 +79,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 
@@ -105,9 +105,9 @@ FastText embeddings (they work better on this dataset). The full code then is as
 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -135,7 +135,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -144,7 +144,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 
@@ -167,9 +167,9 @@ Once you have the data, reproduce our experiments exactly like for CoNLL-03, jus
 FastText word embeddings and German contextual string embeddings. The full code then is as follows: 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -197,7 +197,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -206,7 +206,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 
@@ -229,9 +229,9 @@ get the dataset and place train, test and dev data in `/resources/tasks/germeval
 Once you have the data, reproduce our experiments exactly like for the German CoNLL-03: 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -259,7 +259,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -268,7 +268,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 
@@ -292,9 +292,9 @@ so the algorithm knows that POS tags and not NER are to be predicted from this d
 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -322,7 +322,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -330,7 +330,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         tag_type=tag_type,
                                         use_crf=True)
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 
@@ -354,9 +354,9 @@ Run the code with extvec embeddings and our proposed contextual string embedding
 so the algorithm knows that chunking tags and not NER are to be predicted from this data. 
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import  NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import  NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 from typing import List
 import torch
 
@@ -384,7 +384,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -393,7 +393,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=False)
 

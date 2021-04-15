@@ -11,7 +11,7 @@ Let's start by making a `Sentence` object for an example sentence.
 
 ```python
 # The sentence objects holds a sentence that we may want to embed or tag
-from flair.data import Sentence
+from flairrelex.data import Sentence
 
 # Make a sentence object by passing a whitespace tokenized string
 sentence = Sentence('The grass is green .')
@@ -68,7 +68,7 @@ lightweight [segtok library](https://pypi.org/project/segtok/).
 Simply use the `use_tokenizer` flag when instantiating your `Sentence` with an untokenized string:
 
 ```python
-from flair.data import Sentence
+from flairrelex.data import Sentence
 
 # Make a sentence object by passing an untokenized string and the 'use_tokenizer' flag
 sentence = Sentence('The grass is green.', use_tokenizer=True)
@@ -132,7 +132,7 @@ Simply point the `NLPTaskDataFetcher` to the file containing the parsed sentence
 list of `Sentence`.
 
 ```python
-from flair.data_fetcher import NLPTaskDataFetcher
+from flairrelex.data_fetcher import NLPTaskDataFetcher
 
 # use your own data path
 data_folder = 'path/to/conll/formatted/data'

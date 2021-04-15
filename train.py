@@ -2,9 +2,9 @@ from typing import List
 
 import torch
 
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.data import TaggedCorpus
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.data import TaggedCorpus
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings, CharLMEmbeddings, CharacterEmbeddings
 
 # 1. get the corpus
 corpus: TaggedCorpus = NLPTaskDataFetcher.fetch_data(NLPTask.CONLL_03).downsample(0.1)
@@ -35,7 +35,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -44,7 +44,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # initialize trainer
-from flair.trainers.sequence_tagger_trainer import SequenceTaggerTrainer
+from flairrelex.trainers.sequence_tagger_trainer import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=True)
 

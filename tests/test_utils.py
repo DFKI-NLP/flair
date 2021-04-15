@@ -1,7 +1,7 @@
 import pytest
 
-from flair.data import Dictionary
-from flair.training_utils import calculate_micro_avg_metric, calculate_class_metrics
+from flairrelex.data import Dictionary
+from flairrelex.training_utils import calculate_micro_avg_metric, calculate_class_metrics
 
 
 @pytest.fixture

@@ -8,9 +8,9 @@ import datetime
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from flair.data import Sentence, TaggedCorpus, Dictionary
-from flair.models.text_classification_model import TextClassifier
-from flair.training_utils import convert_labels_to_one_hot, calculate_micro_avg_metric, init_output_file, \
+from flairrelex.data import Sentence, TaggedCorpus, Dictionary
+from flairrelex.models.text_classification_model import TextClassifier
+from flairrelex.training_utils import convert_labels_to_one_hot, calculate_micro_avg_metric, init_output_file, \
     clear_embeddings, \
     calculate_class_metrics
 

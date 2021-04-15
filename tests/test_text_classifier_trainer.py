@@ -1,11 +1,11 @@
 import shutil
 
-from flair.data import Sentence
+from flairrelex.data import Sentence
 
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.embeddings import WordEmbeddings, DocumentMeanEmbeddings, DocumentLSTMEmbeddings
-from flair.models.text_classification_model import TextClassifier
-from flair.trainers.text_classification_trainer import TextClassifierTrainer
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import WordEmbeddings, DocumentMeanEmbeddings, DocumentLSTMEmbeddings
+from flairrelex.models.text_classification_model import TextClassifier
+from flairrelex.trainers.text_classification_trainer import TextClassifierTrainer
 
 
 def test_text_classifier_single_label():

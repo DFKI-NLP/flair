@@ -1,4 +1,4 @@
-from flair.data_fetcher import NLPTask, NLPTaskDataFetcher
+from flairrelex.data_fetcher import NLPTask, NLPTaskDataFetcher
 
 
 def test_load_imdb_data():

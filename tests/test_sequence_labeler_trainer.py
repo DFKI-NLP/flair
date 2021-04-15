@@ -1,9 +1,9 @@
 import shutil
 
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.embeddings import WordEmbeddings
-from flair.models import SequenceTagger
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import WordEmbeddings
+from flairrelex.models import SequenceTagger
+from flairrelex.trainers import SequenceTaggerTrainer
 
 
 def test_training():

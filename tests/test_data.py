@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-from flair.data import Sentence, Label, Token, Dictionary, TaggedCorpus
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.data import Sentence, Label, Token, Dictionary, TaggedCorpus
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
 
 
 def test_get_head():

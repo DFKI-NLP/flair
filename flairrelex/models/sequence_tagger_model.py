@@ -5,13 +5,13 @@ import torch.nn as nn
 import torch
 import numpy as np
 
-import flair.embeddings
-from flair.data import Dictionary, Sentence, Token
-from flair.file_utils import cached_path
+import flairrelex.embeddings
+from flairrelex.data import Dictionary, Sentence, Token
+from flairrelex.file_utils import cached_path
 
 from typing import List, Tuple, Union
 
-from flair.training_utils import clear_embeddings
+from flairrelex.training_utils import clear_embeddings
 
 
 START_TAG: str = '<START>'
@@ -62,7 +62,7 @@ class SequenceTagger(nn.Module):
 
     def __init__(self,
                  hidden_size: int,
-                 embeddings: flair.embeddings.TokenEmbeddings,
+                 embeddings: flairrelex.embeddings.TokenEmbeddings,
                  tag_dictionary: Dictionary,
                  tag_type: str,
                  use_crf: bool = True,

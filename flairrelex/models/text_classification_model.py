@@ -4,9 +4,9 @@ from typing import List, Union
 import torch
 import torch.nn as nn
 
-import flair.embeddings
-from flair.data import Dictionary, Sentence, Label
-from flair.training_utils import convert_labels_to_one_hot, clear_embeddings
+import flairrelex.embeddings
+from flairrelex.data import Dictionary, Sentence, Label
+from flairrelex.training_utils import convert_labels_to_one_hot, clear_embeddings
 
 
 class TextClassifier(nn.Module):
@@ -18,7 +18,7 @@ class TextClassifier(nn.Module):
     """
 
     def __init__(self,
-                 document_embeddings: flair.embeddings.DocumentEmbeddings,
+                 document_embeddings: flairrelex.embeddings.DocumentEmbeddings,
                  label_dictionary: Dictionary,
                  multi_label: bool):
 
@@ -28,7 +28,7 @@ class TextClassifier(nn.Module):
         self.label_dictionary: Dictionary = label_dictionary
         self.multi_label = multi_label
 
-        self.document_embeddings: flair.embeddings.DocumentLSTMEmbeddings = document_embeddings
+        self.document_embeddings: flairrelex.embeddings.DocumentLSTMEmbeddings = document_embeddings
 
         self.decoder = nn.Linear(self.document_embeddings.embedding_length, len(self.label_dictionary))
 

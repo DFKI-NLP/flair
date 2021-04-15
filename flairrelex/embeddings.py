@@ -541,7 +541,7 @@ class CharLMEmbeddings(TokenEmbeddings):
         self.name = model
         self.static_embeddings = detach
 
-        from flair.models import LanguageModel
+        from flairrelex.models import LanguageModel
         self.lm = LanguageModel.load_language_model(model)
         self.detach = detach
 

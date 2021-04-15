@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='flair',
+    name='flairrelex',
     version='0.2.0.post1',
     description='A very simple framework for state-of-the-art NLP',
     long_description=open("README.md",encoding='utf-8').read(),
     long_description_content_type="text/markdown",
     author='Alan Akbik',
     author_email='alan.akbik@zalando.de',
-    url='https://github.com/zalandoresearch/flair',
+    url='https://github.com/DFKI-NLP/flairRelEx',
     packages=find_packages(exclude='test'),  # same as name
     license='MIT',
     install_requires=[

@@ -9,10 +9,10 @@ import sys
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from flair.file_utils import cached_path
-from flair.models.sequence_tagger_model import SequenceTagger
-from flair.data import Sentence, Token, TaggedCorpus
-from flair.training_utils import Metric
+from flairrelex.file_utils import cached_path
+from flairrelex.models.sequence_tagger_model import SequenceTagger
+from flairrelex.data import Sentence, Token, TaggedCorpus
+from flairrelex.training_utils import Metric
 
 
 class SequenceTaggerTrainer:

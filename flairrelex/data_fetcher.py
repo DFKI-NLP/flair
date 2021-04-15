@@ -3,7 +3,7 @@ import re
 import os
 from enum import Enum
 
-from flair.data import Sentence, TaggedCorpus, Token, Label
+from flairrelex.data import Sentence, TaggedCorpus, Token, Label
 
 
 class NLPTask(Enum):

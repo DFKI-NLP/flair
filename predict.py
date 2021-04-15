@@ -1,5 +1,5 @@
-from flair.data import Sentence
-from flair.models import SequenceTagger
+from flairrelex.data import Sentence
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger.load('ner')
 

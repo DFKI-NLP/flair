@@ -34,9 +34,9 @@ corpus/valid.txt
 Once you have this folder structure, simply point the `LanguageModelTrainer` class to it to start learning a model.
 
 ```python
-from flair.data import Dictionary
-from flair.models import LanguageModel
-from flair.trainers.language_model_trainer import LanguageModelTrainer, TextCorpus
+from flairrelex.data import Dictionary
+from flairrelex.models import LanguageModel
+from flairrelex.trainers.language_model_trainer import LanguageModelTrainer, TextCorpus
 
 # are you training a forward or backward LM?
 is_forward_lm = True

@@ -3,7 +3,7 @@ from typing import List
 import os
 import numpy as np
 
-from flair.data import Dictionary, Sentence
+from flairrelex.data import Dictionary, Sentence
 
 
 class Metric(object):

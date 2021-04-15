@@ -83,7 +83,7 @@ class Dictionary:
 
     @classmethod
     def load(cls, name: str):
-        from flair.file_utils import cached_path
+        from flairrelex.file_utils import cached_path
         if name == 'chars' or name == 'common-chars':
             base_path = 'https://s3.eu-central-1.amazonaws.com/alan-nlp/resources/models/common_characters'
             char_dict = cached_path(base_path, cache_dir='datasets')

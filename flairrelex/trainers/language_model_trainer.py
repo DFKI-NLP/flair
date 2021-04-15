@@ -7,8 +7,8 @@ import torch
 from torch.autograd import Variable
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from flair.data import Dictionary
-from flair.models import LanguageModel
+from flairrelex.data import Dictionary
+from flairrelex.models import LanguageModel
 
 class TextCorpus(object):
     def __init__(self, path, dictionary: Dictionary, forward: bool = True, character_level: bool = True):

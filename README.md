@@ -68,8 +68,8 @@ Let's run named entity recognition (NER) over an example sentence. All you need 
 a pre-trained model and use it to predict tags for the sentence:
 
 ```python
-from flair.data import Sentence
-from flair.models import SequenceTagger
+from flairrelex.data import Sentence
+from flairrelex.models import SequenceTagger
 
 # make a sentence
 sentence = Sentence('I love Berlin .')

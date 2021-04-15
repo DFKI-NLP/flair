@@ -23,7 +23,7 @@ Simply instantiate the WordEmbeddings class and pass a string identifier of the 
 you want to use GloVe embeddings, pass the string 'glove' to the constructor: 
 
 ```python
-from flair.embeddings import WordEmbeddings
+from flairrelex.embeddings import WordEmbeddings
 
 # init embedding
 glove_embedding = WordEmbeddings('glove')
@@ -83,7 +83,7 @@ contextual use*.
 With Flair, you can use these embeddings simply by instantiating the appropriate embedding class, same as before:
 
 ```python
-from flair.embeddings import CharLMEmbeddings
+from flairrelex.embeddings import CharLMEmbeddings
 
 # init embedding
 charlm_embedding_forward = CharLMEmbeddings('news-forward')
@@ -125,7 +125,7 @@ With Flair, you need not worry about such things. Just choose the appropriate
 embedding class and character features will then automatically train during downstream task training. 
 
 ```python
-from flair.embeddings import CharacterEmbeddings
+from flairrelex.embeddings import CharacterEmbeddings
 
 # init embedding
 embedding = CharacterEmbeddings()
@@ -150,7 +150,7 @@ character language model.
 First, instantiate the three embeddings you wish to combine: 
 
 ```python
-from flair.embeddings import WordEmbeddings, CharLMEmbeddings
+from flairrelex.embeddings import WordEmbeddings, CharLMEmbeddings
 
 # init GloVe embedding
 glove_embedding = WordEmbeddings('glove')
@@ -163,7 +163,7 @@ charlm_embedding_backward = CharLMEmbeddings('news-backward')
 Now instantiate the `StackedEmbeddings` class and pass it a list containing these three embeddings.
 
 ```python
-from flair.embeddings import StackedEmbeddings
+from flairrelex.embeddings import StackedEmbeddings
 
 # now create the StackedEmbedding object that combines all embeddings
 stacked_embeddings = StackedEmbeddings(embeddings=[glove_embedding, charlm_embedding_forward, charlm_embedding_backward])

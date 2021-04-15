@@ -1,9 +1,9 @@
 import shutil
 
-from flair.data import Dictionary, Sentence
-from flair.embeddings import CharLMEmbeddings
-from flair.models import LanguageModel
-from flair.trainers.language_model_trainer import LanguageModelTrainer, TextCorpus
+from flairrelex.data import Dictionary, Sentence
+from flairrelex.embeddings import CharLMEmbeddings
+from flairrelex.models import LanguageModel
+from flairrelex.trainers.language_model_trainer import LanguageModelTrainer, TextCorpus
 
 
 def test_training():

@@ -1,10 +1,10 @@
 import pytest
 from typing import Tuple
 
-from flair.data import Dictionary, TaggedCorpus
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.embeddings import WordEmbeddings, DocumentLSTMEmbeddings
-from flair.models.text_classification_model import TextClassifier
+from flairrelex.data import Dictionary, TaggedCorpus
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import WordEmbeddings, DocumentLSTMEmbeddings
+from flairrelex.models.text_classification_model import TextClassifier
 
 
 @pytest.fixture

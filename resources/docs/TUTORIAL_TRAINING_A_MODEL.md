@@ -83,9 +83,9 @@ Here is example code for a small NER model trained over CoNLL-03 data, using sim
 In this example, we downsample the data to 10% of the original data.
 
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import TokenEmbeddings, WordEmbeddings, StackedEmbeddings
 from typing import List
 
 # 1. get the corpus
@@ -115,7 +115,7 @@ embedding_types: List[TokenEmbeddings] = [
 embeddings: StackedEmbeddings = StackedEmbeddings(embeddings=embedding_types)
 
 # 5. initialize sequence tagger
-from flair.models import SequenceTagger
+from flairrelex.models import SequenceTagger
 
 tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         embeddings=embeddings,
@@ -124,7 +124,7 @@ tagger: SequenceTagger = SequenceTagger(hidden_size=256,
                                         use_crf=True)
 
 # 6. initialize trainer
-from flair.trainers import SequenceTaggerTrainer
+from flairrelex.trainers import SequenceTaggerTrainer
 
 trainer: SequenceTaggerTrainer = SequenceTaggerTrainer(tagger, corpus, test_mode=True)
 
@@ -161,7 +161,7 @@ Here, each line in the file contains a textual document. A document can have one
 Point the `NLPTaskDataFetcher` to this file to convert each line to a `Sentence` object annotated with the labels. It returns a list of `Sentence`.
 
 ```python
-from flair.data_fetcher import NLPTaskDataFetcher
+from flairrelex.data_fetcher import NLPTaskDataFetcher
 
 # use your own data path
 data_folder = 'path/to/text-classification/formatted/data'
@@ -183,11 +183,11 @@ To train a model, you need to create three files in this way: A train, dev and t
 
 Here the example code for training the text classifier.
 ```python
-from flair.data import TaggedCorpus
-from flair.data_fetcher import NLPTaskDataFetcher, NLPTask
-from flair.embeddings import WordEmbeddings, CharLMEmbeddings, DocumentLSTMEmbeddings
-from flair.models.text_classification_model import TextClassifier
-from flair.trainers.text_classification_trainer import TextClassifierTrainer
+from flairrelex.data import TaggedCorpus
+from flairrelex.data_fetcher import NLPTaskDataFetcher, NLPTask
+from flairrelex.embeddings import WordEmbeddings, CharLMEmbeddings, DocumentLSTMEmbeddings
+from flairrelex.models.text_classification_model import TextClassifier
+from flairrelex.trainers.text_classification_trainer import TextClassifierTrainer
 
 # 1. get the corpus
 corpus: TaggedCorpus = NLPTaskDataFetcher.fetch_data(NLPTask.AG_NEWS).downsample(0.1)
